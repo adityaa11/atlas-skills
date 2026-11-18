@@ -1,0 +1,3 @@
+interface:
+  display_name: "Implementation Context Creation"
+  short_description: "Create researched, milestone-based implementation guidance from project context"

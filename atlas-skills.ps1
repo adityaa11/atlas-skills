@@ -4,7 +4,7 @@ param(
     [string] $Command = 'help',
 
     [Parameter(Position = 1)]
-    [string] $TargetRepo,
+    [string] $CodeRepo,
 
     [Alias('h', 'help')]
     [switch] $HelpRequested,
@@ -37,16 +37,16 @@ atlas-skills commands
   .\atlas-skills.cmd help | --help | -h
       Show this help.
 
-  .\atlas-skills.cmd export <target-repository>
+  .\atlas-skills.cmd export <code-repository>
       Link this repository's skills into and bootstrap Atlas workflow files in:
-      <target-repository>\.agents\skills\atlas-skills
+      <code-repository>\.agents\skills\atlas-skills
       Creates missing .gitignore entries and atlas-workflow.yaml without
       overwriting existing files.
 
-  .\atlas-skills.cmd init-artifacts <target-repository>
+  .\atlas-skills.cmd init-artifacts <code-repository>
       Initialize and mount the configured artifact checkout using its YAML configuration.
 
-  .\atlas-skills.cmd mount-artifacts <target-repository>
+  .\atlas-skills.cmd mount-artifacts <code-repository>
       Re-mount the configured artifact checkout at .atlas if its mount is missing.
 
   .\atlas-skills.cmd validate
@@ -200,47 +200,47 @@ switch ($normalizedCommand) {
     'validate' { Test-Skills; exit 0 }
     'install' { Install-Command; exit 0 }
     '/export' {
-        if ([string]::IsNullOrWhiteSpace($TargetRepo)) {
-            [Console]::Error.WriteLine('[atlas-skills] ERROR: Usage: .\atlas-skills.cmd export <target-repository>')
-            [Console]::Error.WriteLine('[atlas-skills] NEXT: Provide the root path of the actual-code repository.')
+        if ([string]::IsNullOrWhiteSpace($CodeRepo)) {
+            [Console]::Error.WriteLine('[atlas-skills] ERROR: Usage: .\atlas-skills.cmd export <code-repository>')
+            [Console]::Error.WriteLine('[atlas-skills] NEXT: Provide the root path of the code repository.')
             exit 2
         }
 
-        & (Join-Path $PSScriptRoot 'scripts\link-skills.ps1') -ConsumerRepo $TargetRepo
-        Write-Output "[atlas-skills] SUCCESS: Export completed for $TargetRepo"
+        & (Join-Path $PSScriptRoot 'scripts\link-skills.ps1') -CodeRepo $CodeRepo
+        Write-Output "[atlas-skills] SUCCESS: Export completed for $CodeRepo"
         exit 0
     }
     'export' {
-        if ([string]::IsNullOrWhiteSpace($TargetRepo)) {
-            [Console]::Error.WriteLine('[atlas-skills] ERROR: Usage: .\atlas-skills.cmd export <target-repository>')
-            [Console]::Error.WriteLine('[atlas-skills] NEXT: Provide the root path of the actual-code repository.')
+        if ([string]::IsNullOrWhiteSpace($CodeRepo)) {
+            [Console]::Error.WriteLine('[atlas-skills] ERROR: Usage: .\atlas-skills.cmd export <code-repository>')
+            [Console]::Error.WriteLine('[atlas-skills] NEXT: Provide the root path of the code repository.')
             exit 2
         }
 
-        & (Join-Path $PSScriptRoot 'scripts\link-skills.ps1') -ConsumerRepo $TargetRepo
-        Write-Output "[atlas-skills] SUCCESS: Export completed for $TargetRepo"
+        & (Join-Path $PSScriptRoot 'scripts\link-skills.ps1') -CodeRepo $CodeRepo
+        Write-Output "[atlas-skills] SUCCESS: Export completed for $CodeRepo"
         exit 0
     }
     'init-artifacts' {
-        if ([string]::IsNullOrWhiteSpace($TargetRepo)) {
-            [Console]::Error.WriteLine('[atlas-skills] ERROR: Usage: .\atlas-skills.cmd init-artifacts <target-repository>')
-            [Console]::Error.WriteLine('[atlas-skills] NEXT: Provide the root path of the actual-code repository.')
+        if ([string]::IsNullOrWhiteSpace($CodeRepo)) {
+            [Console]::Error.WriteLine('[atlas-skills] ERROR: Usage: .\atlas-skills.cmd init-artifacts <code-repository>')
+            [Console]::Error.WriteLine('[atlas-skills] NEXT: Provide the root path of the code repository.')
             exit 2
         }
 
-        & (Join-Path $PSScriptRoot 'scripts\artifact-store.ps1') -Action init -Target $TargetRepo
-        Write-Output "[atlas-skills] SUCCESS: Artifact store initialized and mounted for $TargetRepo"
+        & (Join-Path $PSScriptRoot 'scripts\artifact-store.ps1') -Action init -CodeRepo $CodeRepo
+        Write-Output "[atlas-skills] SUCCESS: Artifact store initialized and mounted for $CodeRepo"
         exit 0
     }
     'mount-artifacts' {
-        if ([string]::IsNullOrWhiteSpace($TargetRepo)) {
-            [Console]::Error.WriteLine('[atlas-skills] ERROR: Usage: .\atlas-skills.cmd mount-artifacts <target-repository>')
-            [Console]::Error.WriteLine('[atlas-skills] NEXT: Provide the root path of the actual-code repository.')
+        if ([string]::IsNullOrWhiteSpace($CodeRepo)) {
+            [Console]::Error.WriteLine('[atlas-skills] ERROR: Usage: .\atlas-skills.cmd mount-artifacts <code-repository>')
+            [Console]::Error.WriteLine('[atlas-skills] NEXT: Provide the root path of the code repository.')
             exit 2
         }
 
-        & (Join-Path $PSScriptRoot 'scripts\artifact-store.ps1') -Action mount -Target $TargetRepo
-        Write-Output "[atlas-skills] SUCCESS: Artifact store mounted for $TargetRepo"
+        & (Join-Path $PSScriptRoot 'scripts\artifact-store.ps1') -Action mount -CodeRepo $CodeRepo
+        Write-Output "[atlas-skills] SUCCESS: Artifact store mounted for $CodeRepo"
         exit 0
     }
     default {

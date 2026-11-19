@@ -20,8 +20,10 @@ Before remediation, resolve and validate the artifact store using the
 [shared Atlas Artifact Store Contract](../_shared/atlas-artifact-store-contract.md).
 Read tickets from `.atlas/tickets/`, checkpoints from `.atlas/checkpoints/`,
 and CK/HMN records from `.atlas/feedback/`. Write a remediation checkpoint only
-under `.atlas/checkpoints/`, bind it to the exact actual-code commit, and
-commit only artifact-repository paths.
+under `.atlas/checkpoints/`. Commit authorized remediation source and test paths
+in the code repository, bind the checkpoint to that exact code commit,
+then commit the checkpoint record separately in the artifact repository. Never
+copy source code into the artifact repository.
 
 ## Preflight
 

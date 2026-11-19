@@ -8,11 +8,14 @@ Implementation Context, tickets, checkpoints, CK feedback, HMN
 authorizations, and their indexes. It does not store reusable skill definitions
 or source code.
 
+Use the [Atlas Terminology](atlas-terminology.md) for all repository and
+commit references in this contract and its consuming skills.
+
 ## Required resolution
 
 Before reading or writing a durable artifact, a consuming skill MUST:
 
-1. resolve the actual-code repository root;
+1. resolve the code repository root;
 2. read its tracked `atlas-workflow.yaml`;
 3. optionally read its ignored `atlas-workflow.local.yaml` for a local checkout
    path;
@@ -55,10 +58,10 @@ entries. GO and CFC write ticket/checkpoint records under `tickets/` and
 
 ## Source binding and commits
 
-Every durable artifact MUST identify the actual-code repository and exact
-source commit SHA it used. Artifact creation updates only the artifact
+Every durable artifact MUST identify the code repository and exact code commit
+SHA it used. Artifact creation updates only the artifact
 repository: stage only the authored artifact and directly related index or
-manifest update, then commit there. Do not stage, commit, or modify actual-code
+manifest update, then commit there. Do not stage, commit, or modify code
 repository files as part of artifact creation.
 
 If the artifact repository is dirty in unrelated paths, preserve those changes

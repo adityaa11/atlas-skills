@@ -1,14 +1,14 @@
 # Atlas Skills
 
 Reusable Atlas workflow skills and command-line setup for a separate artifact
-repository. The actual-code repository keeps source code; the artifact
+repository. The code repository keeps source code; the artifact
 repository stores durable contexts, tickets, checkpoints, reviews, and
 authorizations.
 
 ## Prerequisites
 
 - Git must be installed and available on `PATH`.
-- The actual-code repository and its artifact repository must both be cloned
+- The code repository and its artifact repository must both be cloned
   locally.
 - On macOS and Linux, install PowerShell 7 (`pwsh`).
 
@@ -32,7 +32,7 @@ pwsh ./atlas-skills.ps1 export /workspace/payments-service
 pwsh ./atlas-skills.ps1 export /workspace/payments-service
 ```
 
-The `export` command creates these files in the actual-code repository:
+The `export` command creates these files in the code repository:
 
 ```text
 atlas-workflow.yaml         # commit this file
@@ -64,7 +64,7 @@ artifact_store:
 
 Run the setup command after both YAML files are ready. It validates the current
 configuration and Git remote, initializes the artifact store if necessary, and
-mounts it at `.atlas` in the actual-code repository.
+mounts it at `.atlas` in the code repository.
 
 ### Windows
 
@@ -89,7 +89,7 @@ Windows uses a directory junction. macOS and Linux use a symbolic link.
 ## Resulting layout
 
 ```text
-actual-code-repo/
+code-repo/
 ├─ .agents/skills/atlas-skills/  # local skill junction; ignored by Git
 ├─ .atlas/                       # mount to artifact repository; ignored by Git
 ├─ atlas-workflow.yaml            # tracked

@@ -6,7 +6,7 @@ param(
 
     [Parameter(Mandatory = $true)]
     [ValidateNotNullOrEmpty()]
-    [string] $Target
+    [string] $CodeRepo
 )
 
 Set-StrictMode -Version Latest
@@ -52,14 +52,14 @@ function Normalize-GitUrl {
 }
 
 function Get-WorkflowConfig {
-    param([string] $ConsumerRoot)
+    param([string] $CodeRoot)
 
-    $configPath = Join-Path $ConsumerRoot 'atlas-workflow.yaml'
+    $configPath = Join-Path $CodeRoot 'atlas-workflow.yaml'
     if (-not (Test-Path -LiteralPath $configPath -PathType Leaf)) {
         throw "Missing workflow config: $configPath. Run atlas-skills export first."
     }
 
-    $localPath = Join-Path $ConsumerRoot 'atlas-workflow.local.yaml'
+    $localPath = Join-Path $CodeRoot 'atlas-workflow.local.yaml'
     $expectedRemote = Get-ScalarYamlValue -Path $configPath -Key 'expected_remote'
     $checkoutPath = if (Test-Path -LiteralPath $localPath -PathType Leaf) {
         Get-ScalarYamlValue -Path $localPath -Key 'checkout_path'
@@ -71,13 +71,13 @@ function Get-WorkflowConfig {
     $resolvedCheckoutPath = if ([System.IO.Path]::IsPathRooted($checkoutPath)) {
         [System.IO.Path]::GetFullPath($checkoutPath)
     } else {
-        [System.IO.Path]::GetFullPath((Join-Path $ConsumerRoot $checkoutPath))
+        [System.IO.Path]::GetFullPath((Join-Path $CodeRoot $checkoutPath))
     }
 
     return [pscustomobject]@{
         ConfigPath = $configPath
         LocalPath = $localPath
-        MountPath = [System.IO.Path]::GetFullPath((Join-Path $ConsumerRoot '.atlas'))
+        MountPath = [System.IO.Path]::GetFullPath((Join-Path $CodeRoot '.atlas'))
         ExpectedRemote = $expectedRemote
         CheckoutPath = $resolvedCheckoutPath
     }
@@ -85,13 +85,13 @@ function Get-WorkflowConfig {
 
 function Test-ArtifactStore {
     param(
-        [string] $ConsumerRoot,
+        [string] $CodeRoot,
         [switch] $RequireMount,
         [switch] $RequireInitialized
     )
 
-    Invoke-Git -Repository $ConsumerRoot -Arguments @('rev-parse', '--is-inside-work-tree') | Out-Null
-    $config = Get-WorkflowConfig -ConsumerRoot $ConsumerRoot
+    Invoke-Git -Repository $CodeRoot -Arguments @('rev-parse', '--is-inside-work-tree') | Out-Null
+    $config = Get-WorkflowConfig -CodeRoot $CodeRoot
 
     if (-not (Test-Path -LiteralPath $config.CheckoutPath -PathType Container)) {
         throw "Artifact checkout does not exist: $($config.CheckoutPath)"
@@ -164,9 +164,9 @@ function Initialize-ArtifactStore {
 }
 
 function Mount-ArtifactStore {
-    param([string] $ConsumerRoot)
+    param([string] $CodeRoot)
 
-    $config = Test-ArtifactStore -ConsumerRoot $ConsumerRoot -RequireInitialized
+    $config = Test-ArtifactStore -CodeRoot $CodeRoot -RequireInitialized
     if (Test-Path -LiteralPath $config.MountPath) {
         Write-Output "Already mounted: $($config.MountPath) -> $($config.CheckoutPath)"
         return
@@ -188,22 +188,22 @@ function Mount-ArtifactStore {
 
 switch ($Action) {
     'init' {
-        $consumerRoot = [System.IO.Path]::GetFullPath($Target)
-        $config = Test-ArtifactStore -ConsumerRoot $consumerRoot
+        $codeRoot = [System.IO.Path]::GetFullPath($CodeRepo)
+        $config = Test-ArtifactStore -CodeRoot $codeRoot
         Initialize-ArtifactStore -ArtifactRoot $config.CheckoutPath
-        $readyConfig = Test-ArtifactStore -ConsumerRoot $consumerRoot -RequireInitialized
+        $readyConfig = Test-ArtifactStore -CodeRoot $codeRoot -RequireInitialized
         Write-Output "Artifact store ready: $($readyConfig.CheckoutPath)"
-        Mount-ArtifactStore -ConsumerRoot $consumerRoot
+        Mount-ArtifactStore -CodeRoot $codeRoot
     }
     'validate' {
-        $consumerRoot = [System.IO.Path]::GetFullPath($Target)
-        $config = Test-ArtifactStore -ConsumerRoot $consumerRoot
+        $codeRoot = [System.IO.Path]::GetFullPath($CodeRepo)
+        $config = Test-ArtifactStore -CodeRoot $codeRoot
         if ($config.Initialized) {
             Write-Output "Artifact store ready: $($config.CheckoutPath)"
         } else {
             Write-Output "Artifact checkout valid but not initialized: $($config.CheckoutPath)"
-            Write-Output "Next: atlas-skills init-artifacts $consumerRoot"
+            Write-Output "Next: atlas-skills init-artifacts $codeRoot"
         }
     }
-    'mount' { Mount-ArtifactStore -ConsumerRoot ([System.IO.Path]::GetFullPath($Target)) }
+    'mount' { Mount-ArtifactStore -CodeRoot ([System.IO.Path]::GetFullPath($CodeRepo)) }
 }

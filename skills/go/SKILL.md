@@ -20,8 +20,10 @@ Before resolving a ticket or writing a checkpoint, resolve and validate the
 artifact store using the [shared Atlas Artifact Store Contract](../_shared/atlas-artifact-store-contract.md).
 Read tickets from `.atlas/tickets/` and write implementation checkpoints under
 `.atlas/checkpoints/`. Do not use an implied project folder, `.agents`, or the
-skills repository. Bind each durable record to the exact actual-code commit and
-commit only artifact-repository paths.
+skills repository. Commit authorized implementation source and test paths in
+the code repository. Bind each durable checkpoint to that exact code
+commit, then commit the checkpoint record separately in the artifact
+repository. Never copy source code into the artifact repository.
 
 ## Before implementation
 

@@ -1,4 +1,4 @@
-# Atlas workflow configuration for this actual-code repository.
+# Atlas workflow configuration for this code repository.
 #
 # Keep this file in Git. It declares the portable artifact-store contract, not
 # a machine-specific filesystem path. Put a local checkout path, if needed, in
@@ -15,7 +15,7 @@ artifact_store:
 
 artifact_delivery:
   # Durable artifacts are committed in the artifact repository, never in the
-  # actual-code repository. Push policy is decided by the project.
+  # code repository. Push policy is decided by the project.
   commit: required
   push: optional
 

@@ -98,7 +98,7 @@ before creating or refreshing the Architecture Overview and Decision Register.
 Read [references/context-bundle.md](references/context-bundle.md) before
 choosing the context layout or writing its entry-point index.
 
-1. Resolve the actual-code repository root, artifact store, and canonical
+1. Resolve the code repository root, artifact store, and canonical
    context index using the [shared Atlas Artifact Store Contract](../_shared/atlas-artifact-store-contract.md).
 2. Locate the current Project Context at `.atlas/contexts/project.md`.
 3. Locate the current Stack Context at `.atlas/contexts/stack.md` if present. If it is absent, state which

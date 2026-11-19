@@ -20,7 +20,7 @@ Before resolving a ticket or writing a review, resolve and validate the
 artifact store using the [shared Atlas Artifact Store Contract](../_shared/atlas-artifact-store-contract.md).
 Read tickets/checkpoints from `.atlas/tickets/` and `.atlas/checkpoints/`; write
 each consolidated review, supplemental freeze, and replacement freeze under
-`.atlas/feedback/`. Bind every record to the reviewed actual-code commit and
+`.atlas/feedback/`. Bind every record to the reviewed code commit and
 commit only artifact-repository paths.
 
 ## First review

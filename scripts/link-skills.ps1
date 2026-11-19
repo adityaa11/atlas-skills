@@ -2,7 +2,7 @@
 param(
     [Parameter(Mandatory = $true)]
     [ValidateNotNullOrEmpty()]
-    [string] $ConsumerRepo,
+    [string] $CodeRepo,
 
     [string] $SourceRepo
 )
@@ -15,12 +15,12 @@ if ([string]::IsNullOrWhiteSpace($SourceRepo)) {
 }
 
 $sourceRoot = [System.IO.Path]::GetFullPath((Join-Path $SourceRepo 'skills'))
-$consumerRoot = [System.IO.Path]::GetFullPath($ConsumerRepo)
-$skillsRoot = Join-Path $consumerRoot '.agents\skills'
+$codeRoot = [System.IO.Path]::GetFullPath($CodeRepo)
+$skillsRoot = Join-Path $codeRoot '.agents\skills'
 $junctionPath = Join-Path $skillsRoot 'atlas-skills'
-$gitIgnorePath = Join-Path $consumerRoot '.gitignore'
-$workflowConfigPath = Join-Path $consumerRoot 'atlas-workflow.yaml'
-$localWorkflowConfigPath = Join-Path $consumerRoot 'atlas-workflow.local.yaml'
+$gitIgnorePath = Join-Path $codeRoot '.gitignore'
+$workflowConfigPath = Join-Path $codeRoot 'atlas-workflow.yaml'
+$localWorkflowConfigPath = Join-Path $codeRoot 'atlas-workflow.local.yaml'
 $templatePath = Join-Path (Split-Path -Parent $PSScriptRoot) 'templates\atlas-workflow.yaml'
 $localTemplatePath = Join-Path (Split-Path -Parent $PSScriptRoot) 'templates\atlas-workflow.local.yaml'
 
@@ -79,7 +79,7 @@ function New-WorkflowConfigFromTemplate {
 
 function Show-NextSteps {
     param(
-        [string] $ConsumerRoot,
+        [string] $CodeRoot,
         [string] $WorkflowConfigPath
     )
 
@@ -96,8 +96,8 @@ Next steps:
   3. Initialize and mount the configured artifact repository. This command
      validates the current YAML and checkout before writing anything, then
      verifies the completed store automatically:
-     atlas-skills init-artifacts $ConsumerRoot
-     (the mount is $(Join-Path $ConsumerRoot '.atlas'); Windows uses a junction and Unix uses a symlink).
+     atlas-skills init-artifacts $CodeRoot
+     (the mount is $(Join-Path $CodeRoot '.atlas'); Windows uses a junction and Unix uses a symlink).
   4. Commit $relativeConfigPath to this code repository.
   5. Keep machine-specific checkout paths only in atlas-workflow.local.yaml;
      it is ignored and must not be committed.
@@ -110,8 +110,8 @@ if (-not (Test-Path -LiteralPath $sourceRoot -PathType Container)) {
     throw "Source skills directory does not exist: $sourceRoot"
 }
 
-if (-not (Test-Path -LiteralPath $consumerRoot -PathType Container)) {
-    throw "Consumer repository does not exist: $consumerRoot"
+if (-not (Test-Path -LiteralPath $codeRoot -PathType Container)) {
+    throw "Code repository does not exist: $codeRoot"
 }
 
 foreach ($requiredTemplate in @($templatePath, $localTemplatePath)) {
@@ -147,4 +147,4 @@ if (Test-Path -LiteralPath $junctionPath) {
 Add-AtlasGitIgnoreEntries -Path $gitIgnorePath
 New-WorkflowConfigFromTemplate -TemplatePath $templatePath -DestinationPath $workflowConfigPath
 New-WorkflowConfigFromTemplate -TemplatePath $localTemplatePath -DestinationPath $localWorkflowConfigPath
-Show-NextSteps -ConsumerRoot $consumerRoot -WorkflowConfigPath $workflowConfigPath
+Show-NextSteps -CodeRoot $codeRoot -WorkflowConfigPath $workflowConfigPath

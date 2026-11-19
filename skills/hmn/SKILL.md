@@ -20,7 +20,7 @@ Before reconstructing workflow state or issuing a decision, resolve and
 validate the artifact store using the [shared Atlas Artifact Store Contract](../_shared/atlas-artifact-store-contract.md).
 Read tickets/checkpoints from `.atlas/tickets/` and `.atlas/checkpoints/` and
 write durable HMN records only under `.atlas/feedback/`. Bind the record to the
-exact actual-code commit and commit only artifact-repository paths.
+exact code commit and commit only artifact-repository paths.
 
 HMN does not implement production code, perform CFC work, perform CK review, issue `PASS`, change ticket acceptance criteria, or create a new lifecycle state. Its job is:
 

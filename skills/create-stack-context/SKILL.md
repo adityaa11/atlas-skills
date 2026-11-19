@@ -53,7 +53,7 @@ writing a Stack Context. Read
 [references/interactive.md](references/interactive.md) when running the
 interactive workflow.
 
-1. Resolve the actual-code repository root and artifact store using the
+1. Resolve the code repository root and artifact store using the
    [shared Atlas Artifact Store Contract](../_shared/atlas-artifact-store-contract.md).
 2. Find the canonical context index at `.atlas/contexts/index.md` before
    reading individual context files.

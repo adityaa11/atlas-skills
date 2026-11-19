@@ -166,7 +166,7 @@ Persist this normalized interpretation in the existing workflow artifacts:
 
 These records live in the validated artifact store: ticket/checkpoint records
 under `.atlas/tickets/` and `.atlas/checkpoints/`, and CK/HMN decision records
-under `.atlas/feedback/`. Each durable record binds to the exact actual-code
+under `.atlas/feedback/`. Each durable record binds to the exact code
 commit and is committed only in the artifact repository.
 
 Do not renumber established identifiers. New artifacts may normalize legacy

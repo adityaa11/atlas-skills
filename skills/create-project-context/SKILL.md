@@ -46,7 +46,7 @@ Do not force the user to follow a command syntax.
 
 ## Route the work
 
-1. Resolve the actual-code repository root and the artifact store using the
+1. Resolve the code repository root and the artifact store using the
    [shared Atlas Artifact Store Contract](../_shared/atlas-artifact-store-contract.md).
    The durable destination is `.atlas/contexts/`; do not use `.agents/context/`
    or an in-code-repository fallback.

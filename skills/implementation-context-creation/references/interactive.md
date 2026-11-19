@@ -15,10 +15,22 @@ Before asking questions, locate and inspect:
 - repository guidance and high-signal implementation evidence; and
 - existing Implementation Context, if this is a refresh.
 
+Decide whether the context needs a bundle. Use one when several milestones need
+detailed work-package maps or architecture/decision material will evolve
+independently; retain a single document only for genuinely small, one-milestone
+work. Read the compact implementation entry point first when a bundle exists.
+
 Build an in-memory map of project outcomes, scope boundaries, constraints,
 stack decisions, affected areas, dependencies, and evidence gaps. Preserve
 stable decisions during a refresh and mark changed source claims as stale or
 conflicted instead of silently overwriting them.
+
+Classify the project from repository evidence as `greenfield`, `existing-code`,
+or `hybrid`. For existing-code or hybrid work, build only the current-state map
+needed for safe sequencing: active capabilities, entry points/interfaces,
+data/state, runtime boundaries, and behavior that must be preserved, replaced,
+or retired. Do not assume a repository is greenfield merely because it is
+sparse or contains prototypes.
 
 Before proposing phases, produce a concise target end-product review from the
 Project Context and Stack Context together:
@@ -35,6 +47,12 @@ Show which parts are documented, inferred, unknown, or conflicted. Compare the
 Project Context's intended result with what the Stack Context can support. If
 the contexts describe different products or the target result is materially
 unclear, treat that as a blocker before phase decomposition.
+
+Derive the Architecture Overview that explains how the approved stack can
+realize that end product. Identify material implementation-shape choices and
+record them as confirmed, proposed, deferred, blocked, or superseded. Surface
+only decisions that affect milestone order, work-package boundaries, interfaces,
+verification, or later work; leave ticket-local design for ticket creation.
 
 ## 2. Start with a readiness board
 
@@ -56,12 +74,15 @@ IMPLEMENTATION CONTEXT READINESS
 
 [complete] Target end product reviewed from Project and Stack Context
 [complete] Project outcomes mapped to implementation outcomes
+[partial]  Project-state classification and current-state preservation map
 [partial]  Stack decisions and repository boundaries
+[partial]  Architecture Overview and Decision Register
 [partial]  Milestone outcomes and dependency shape
-[to-confirm] Decision authority and phase approvals
+[to-confirm] Material decisions and their implementation impact
 [partial]  Integration, data, and transition impact
 [missing]  Research for compatibility-sensitive choice
 [partial]  Verification and operational evidence
+[partial]  Work-package map and ticket-generation readiness
 
 Blocking gaps: 1
 Proposed status: needs-review
@@ -79,10 +100,26 @@ Ask no more than three related questions in one round. Prioritize:
 2. a missing Project Context boundary or outcome that changes phase scope;
 3. a Stack Context or repository fact that changes product feasibility or
    sequencing;
-4. an authority or approval boundary for a material decision;
+4. a material decision whose answer changes scope, sequencing, interface, or
+   verification;
 5. a phase dependency, transition, or compatibility constraint;
 6. a verification or operational expectation; and
 7. a research question whose answer may change the plan.
+
+Once milestone shape is sufficiently clear, decompose every milestone into
+candidate work packages. Ask about work-package granularity only when it would
+materially change the result; otherwise use small, independently reviewable
+implementation units. This is execution planning, not a request for estimates,
+sprint dates, or assignees.
+
+When a decision needs the user's answer, show an **Approval-needed** list with
+the decision, why it matters, affected milestone or package, bounded options
+or evidence, and safe deferral consequence. Do not assign an owner, approver,
+or professional role.
+
+When a ticket or implementation result changes a recorded architecture
+decision, refresh the affected Architecture Overview, decision record,
+dependency graph, and downstream milestones before planning their tickets.
 
 Do not ask for every class, endpoint, package, ticket, or estimate. Capture
 those only when the user explicitly asks for implementation-level detail and
@@ -129,6 +166,9 @@ Inputs:
 - .agents/context/stack.md
 - repository evidence: [paths]
 
+Project state: [greenfield | existing-code | hybrid] — [evidence]
+Current-state transition: [not applicable | preservation/replacement summary]
+
 Target end product:
 - [product form and primary users]
 - [essential capabilities and acceptance signals]
@@ -139,11 +179,22 @@ Milestone-based phases:
 2. [milestone outcome] -> [project/product result] -> [acceptance gate]
 
 Material decisions: [confirmed / proposed / deferred]
+Architecture Overview: [material boundaries and seams]
+Decision Register: [new, resolved, deferred, or superseded decisions]
 Research findings: [decision-relevant summary]
 Still deferred: [items and revisit triggers]
 
+Candidate work packages: [summary at <granularity>]
+Dependency shape: [sequence and parallel work]
+Fixture replacement map: [pairs and preserved invariants, if applicable]
+Ticket-generation readiness: [ready | not-ready and gaps]
+Context layout: [single document | bundle; entry point and selected documents]
+
+Approval-needed: [only source-supported unresolved decisions, if any]
+
 Will update:
-- .agents/context/implementation.md
+- .agents/context/implementation.md [entry point or single document]
+- .agents/context/implementation/[architecture, decisions, verification, milestones...]
 - .agents/context/index.md
 
 Please confirm, revise a phase, continue researching, or keep this as draft.
@@ -164,6 +215,8 @@ Recognize natural equivalents of:
 - "compare" - show the smallest useful decision comparison;
 - "split/merge this phase" - revise milestone outcomes, dependencies, and
   acceptance gates;
+- "change work-package granularity" - revise the execution-planning map and
+  rerun the ticket-generation readiness test;
 - "defer" - record the item with a revisit trigger;
 - "review" - show the current preview without writing;
 - "save" - write only after preview and confirmation; and

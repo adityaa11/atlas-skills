@@ -55,7 +55,7 @@ Claim state: documented | observed | inferred | unknown | conflicted
 Impact: [phase, decision, interface, test, or operational consequence]
 Decision status: confirmed | proposed | experimental | deferred | blocked
 Confidence: high | medium | low
-Follow-up: [owner/trigger, or none]
+Follow-up: [decision trigger/condition, or none]
 ```
 
 Never cite a source that was not inspected. Keep source quotes short; prefer
@@ -75,6 +75,6 @@ At the end of the Implementation Context, summarize:
 
 - findings that changed the phase shape or technical decision;
 - evidence gaps that remain non-blocking;
-- questions that block a phase and their owner or trigger; and
+- questions that block a phase and their decision trigger; and
 - what execution planning must revalidate as the repository or external
   technology changes.

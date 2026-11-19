@@ -53,10 +53,11 @@ writing a Stack Context. Read
 [references/interactive.md](references/interactive.md) when running the
 interactive workflow.
 
-1. Resolve the repository root and the context destination.
-2. Find the canonical context index before reading individual context files.
-3. Locate the current Project Context. Prefer an established repository path;
-   otherwise use `.agents/context/project.md`.
+1. Resolve the actual-code repository root and artifact store using the
+   [shared Atlas Artifact Store Contract](../_shared/atlas-artifact-store-contract.md).
+2. Find the canonical context index at `.atlas/contexts/index.md` before
+   reading individual context files.
+3. Locate the current Project Context at `.atlas/contexts/project.md`.
 4. Inspect only high-signal evidence needed to verify a stack decision:
    Project Context, repository guidance, existing environment metadata, and
    authoritative technology documentation when a current capability,
@@ -122,10 +123,11 @@ Before writing, show:
 - the exact files that will be created or updated.
 
 Write only after the user confirms the preview. Use relative links, verify
-them, and preserve existing context files. If a canonical index exists, add
-the Stack Context entry without rewriting unrelated entries. If no convention
-exists, use `.agents/context/stack.md` and the repository's existing context
-index convention.
+them, and preserve existing context files. Add only the Stack Context entry to
+the canonical index without rewriting unrelated entries. Write
+`.atlas/contexts/stack.md`, bind it to the exact source commit, and commit only
+the changed artifact and index in the artifact repository as required by the
+shared Artifact Store Contract.
 
 ## Handoff
 

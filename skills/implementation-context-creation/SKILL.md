@@ -98,12 +98,10 @@ before creating or refreshing the Architecture Overview and Decision Register.
 Read [references/context-bundle.md](references/context-bundle.md) before
 choosing the context layout or writing its entry-point index.
 
-1. Resolve the repository root, context destination, and canonical context
-   index.
-2. Locate the current Project Context. Prefer the repository's established
-   path; otherwise use `.agents/context/project.md`.
-3. Locate the current Stack Context if present. Prefer the established path;
-   otherwise check `.agents/context/stack.md`. If it is absent, state which
+1. Resolve the actual-code repository root, artifact store, and canonical
+   context index using the [shared Atlas Artifact Store Contract](../_shared/atlas-artifact-store-contract.md).
+2. Locate the current Project Context at `.atlas/contexts/project.md`.
+3. Locate the current Stack Context at `.atlas/contexts/stack.md` if present. If it is absent, state which
    stack decisions are inherited, unknown, or intentionally deferred rather
    than inventing a baseline.
 4. Inspect high-signal repository evidence: repository guidance, current
@@ -403,8 +401,10 @@ Before writing, show:
 
 Write only after the user confirms the preview, unless the user has already
 explicitly asked to create or refresh the artifact and no material blocker
-remains. Preserve existing context files and unrelated index entries. Use
-relative links and verify them.
+remains. Preserve existing context files and unrelated index entries. Write the
+entry point under `.atlas/contexts/implementation/`, use relative links and
+verify them, bind it to the exact source commit, and commit only the changed
+artifact files and index entries in the artifact repository.
 
 ## Handoff
 

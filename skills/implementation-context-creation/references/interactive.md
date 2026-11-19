@@ -162,8 +162,8 @@ IMPLEMENTATION CONTEXT PREVIEW
 
 Status: ready
 Inputs:
-- .agents/context/project.md
-- .agents/context/stack.md
+- .atlas/contexts/project.md
+- .atlas/contexts/stack.md
 - repository evidence: [paths]
 
 Project state: [greenfield | existing-code | hybrid] — [evidence]
@@ -193,9 +193,9 @@ Context layout: [single document | bundle; entry point and selected documents]
 Approval-needed: [only source-supported unresolved decisions, if any]
 
 Will update:
-- .agents/context/implementation.md [entry point or single document]
-- .agents/context/implementation/[architecture, decisions, verification, milestones...]
-- .agents/context/index.md
+- .atlas/contexts/implementation/index.md [entry point or single document]
+- .atlas/contexts/implementation/[architecture, decisions, verification, milestones...]
+- .atlas/contexts/index.md
 
 Please confirm, revise a phase, continue researching, or keep this as draft.
 ```
@@ -203,7 +203,7 @@ Please confirm, revise a phase, continue researching, or keep this as draft.
 If the user requests a revision, update only the affected map and rerun the
 readiness check. If the user confirms, write the approved artifact and index
 entry. If no canonical index exists, follow repository convention; otherwise
-use `.agents/context/implementation.md` and the established index.
+use `.atlas/contexts/implementation/index.md` and the established index.
 
 ## 7. Support natural navigation
 

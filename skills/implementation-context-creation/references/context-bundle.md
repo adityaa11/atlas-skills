@@ -9,8 +9,8 @@ detailed milestones or architecture/decision material that changes separately.
 Use repository convention when present. Otherwise use:
 
 ```text
-.agents/context/
-├── implementation.md                     # Compact entry point and routing index
+.atlas/contexts/
+├── implementation/index.md               # Compact entry point and routing index
 └── implementation/
     ├── architecture.md                    # Architecture Overview
     ├── decisions.md                       # Decision Register

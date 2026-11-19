@@ -1,4 +1,4 @@
-[CmdletBinding()]
+[CmdletBinding(SupportsShouldProcess)]
 param(
     [Parameter(Position = 0)]
     [string] $Command = 'help',
@@ -38,8 +38,16 @@ atlas-skills commands
       Show this help.
 
   .\atlas-skills.cmd export <target-repository>
-      Link this repository's skills into:
+      Link this repository's skills into and bootstrap Atlas workflow files in:
       <target-repository>\.agents\skills\atlas-skills
+      Creates missing .gitignore entries and atlas-workflow.yaml without
+      overwriting existing files.
+
+  .\atlas-skills.cmd init-artifacts <target-repository>
+      Initialize and mount the configured artifact checkout using its YAML configuration.
+
+  .\atlas-skills.cmd mount-artifacts <target-repository>
+      Re-mount the configured artifact checkout at .atlas if its mount is missing.
 
   .\atlas-skills.cmd validate
       Validate every skill under .\skills.
@@ -54,6 +62,8 @@ Examples:
 
   .\atlas-skills.cmd help
   .\atlas-skills.cmd export C:\Workspace\atlas\ces-platform
+  .\atlas-skills.cmd init-artifacts C:\Workspace\atlas\ces-platform
+  .\atlas-skills.cmd mount-artifacts C:\Workspace\atlas\ces-platform
   .\atlas-skills.cmd export C:\Workspace\other-repo
   .\atlas-skills.cmd validate
   .\atlas-skills.cmd install
@@ -63,11 +73,11 @@ Examples:
 
 function Test-Skills {
     $skillsRoot = Join-Path $PSScriptRoot 'skills'
-    $skillDirectories = @(Get-ChildItem -LiteralPath $skillsRoot -Directory -ErrorAction SilentlyContinue)
+    $skillDirectories = @(Get-ChildItem -LiteralPath $skillsRoot -Directory -ErrorAction SilentlyContinue |
+        Where-Object { -not $_.Name.StartsWith('_') })
 
     if ($skillDirectories.Count -eq 0) {
-        [Console]::Error.WriteLine("No skills found under $skillsRoot")
-        exit 1
+        throw "No skills found under $skillsRoot"
     }
 
     $seenNames = @{}
@@ -118,11 +128,10 @@ function Test-Skills {
     }
 
     if ($failed) {
-        exit 1
+        throw 'Skill validation failed. Fix every FAIL row, then run validate again.'
     }
 
-    Write-Output "Validated $($seenNames.Count) skill(s)."
-    exit 0
+    Write-Output "[atlas-skills] SUCCESS: Validated $($seenNames.Count) skill(s)."
 }
 
 function Install-Command {
@@ -175,41 +184,73 @@ $endMarker
         Write-Output "Already installed in: $profilePath"
     }
 
-    Write-Output 'Open a new PowerShell terminal, or run: . $PROFILE'
-    exit 0
+    Write-Output '[atlas-skills] SUCCESS: Command installation completed. Open a new PowerShell terminal, or run: . $PROFILE'
 }
 
+try {
 switch ($normalizedCommand) {
     '/help' { Show-Help; exit 0 }
     'help' { Show-Help; exit 0 }
     '-help' { Show-Help; exit 0 }
     '--help' { Show-Help; exit 0 }
     '-h' { Show-Help; exit 0 }
-    'version' { Write-Output "atlas-skills $version"; exit 0 }
-    '--version' { Write-Output "atlas-skills $version"; exit 0 }
-    '-v' { Write-Output "atlas-skills $version"; exit 0 }
-    'validate' { Test-Skills }
-    'install' { Install-Command }
+    'version' { Write-Output "[atlas-skills] SUCCESS: atlas-skills $version"; exit 0 }
+    '--version' { Write-Output "[atlas-skills] SUCCESS: atlas-skills $version"; exit 0 }
+    '-v' { Write-Output "[atlas-skills] SUCCESS: atlas-skills $version"; exit 0 }
+    'validate' { Test-Skills; exit 0 }
+    'install' { Install-Command; exit 0 }
     '/export' {
         if ([string]::IsNullOrWhiteSpace($TargetRepo)) {
-            [Console]::Error.WriteLine('Usage: .\atlas-skills.cmd export <target-repository>')
+            [Console]::Error.WriteLine('[atlas-skills] ERROR: Usage: .\atlas-skills.cmd export <target-repository>')
+            [Console]::Error.WriteLine('[atlas-skills] NEXT: Provide the root path of the actual-code repository.')
             exit 2
         }
 
         & (Join-Path $PSScriptRoot 'scripts\link-skills.ps1') -ConsumerRepo $TargetRepo
+        Write-Output "[atlas-skills] SUCCESS: Export completed for $TargetRepo"
         exit 0
     }
     'export' {
         if ([string]::IsNullOrWhiteSpace($TargetRepo)) {
-            [Console]::Error.WriteLine('Usage: .\atlas-skills.cmd export <target-repository>')
+            [Console]::Error.WriteLine('[atlas-skills] ERROR: Usage: .\atlas-skills.cmd export <target-repository>')
+            [Console]::Error.WriteLine('[atlas-skills] NEXT: Provide the root path of the actual-code repository.')
             exit 2
         }
 
         & (Join-Path $PSScriptRoot 'scripts\link-skills.ps1') -ConsumerRepo $TargetRepo
+        Write-Output "[atlas-skills] SUCCESS: Export completed for $TargetRepo"
+        exit 0
+    }
+    'init-artifacts' {
+        if ([string]::IsNullOrWhiteSpace($TargetRepo)) {
+            [Console]::Error.WriteLine('[atlas-skills] ERROR: Usage: .\atlas-skills.cmd init-artifacts <target-repository>')
+            [Console]::Error.WriteLine('[atlas-skills] NEXT: Provide the root path of the actual-code repository.')
+            exit 2
+        }
+
+        & (Join-Path $PSScriptRoot 'scripts\artifact-store.ps1') -Action init -Target $TargetRepo
+        Write-Output "[atlas-skills] SUCCESS: Artifact store initialized and mounted for $TargetRepo"
+        exit 0
+    }
+    'mount-artifacts' {
+        if ([string]::IsNullOrWhiteSpace($TargetRepo)) {
+            [Console]::Error.WriteLine('[atlas-skills] ERROR: Usage: .\atlas-skills.cmd mount-artifacts <target-repository>')
+            [Console]::Error.WriteLine('[atlas-skills] NEXT: Provide the root path of the actual-code repository.')
+            exit 2
+        }
+
+        & (Join-Path $PSScriptRoot 'scripts\artifact-store.ps1') -Action mount -Target $TargetRepo
+        Write-Output "[atlas-skills] SUCCESS: Artifact store mounted for $TargetRepo"
         exit 0
     }
     default {
-        [Console]::Error.WriteLine("Unknown command '$Command'. Run .\atlas-skills.cmd help.")
+        [Console]::Error.WriteLine("[atlas-skills] ERROR: Unknown command '$Command'. Run .\atlas-skills.cmd help.")
+        [Console]::Error.WriteLine('[atlas-skills] NEXT: Choose a command listed in atlas-skills help.')
         exit 2
     }
+}
+} catch {
+    [Console]::Error.WriteLine("[atlas-skills] ERROR: $($_.Exception.Message)")
+    [Console]::Error.WriteLine('[atlas-skills] NEXT: Correct the reported configuration or repository state, then rerun the command.')
+    exit 1
 }

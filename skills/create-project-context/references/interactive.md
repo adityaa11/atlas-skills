@@ -78,8 +78,8 @@ PROJECT CONTEXT PREVIEW
 
 Status: ready
 Will update:
-- .agents/context/index.md
-- .agents/context/project.md
+- .atlas/contexts/index.md
+- .atlas/contexts/project.md
 
 Still deferred:
 - [non-blocking item]

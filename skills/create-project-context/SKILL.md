@@ -46,12 +46,12 @@ Do not force the user to follow a command syntax.
 
 ## Route the work
 
-1. Resolve the repository root and any destination named by the user. Reuse an
-   established context convention when one exists; otherwise use
-   `.agents/context/`.
-2. Find the canonical index before reading individual context files. Prefer a
-   user- or repository-defined path, then an index referenced by `AGENTS.md`,
-   then `.agents/context/index.md`.
+1. Resolve the actual-code repository root and the artifact store using the
+   [shared Atlas Artifact Store Contract](../_shared/atlas-artifact-store-contract.md).
+   The durable destination is `.atlas/contexts/`; do not use `.agents/context/`
+   or an in-code-repository fallback.
+2. Find the canonical index at `.atlas/contexts/index.md` before reading
+   individual context files.
 3. Determine whether the Project Context is absent, incomplete, or being
    refreshed. Preserve stable user decisions during refresh.
 4. Inspect only high-signal evidence: supplied project material, repository
@@ -78,9 +78,11 @@ Before writing, show:
 - the proposed Project Context status; and
 - the exact files that will be created or updated.
 
-Write only the Project Context and its index. Use relative links, verify live
-links, preserve existing repository conventions, and do not create placeholder
-files for unrelated artifacts.
+Write only `.atlas/contexts/project.md` and its index. Use relative links,
+verify live links, preserve existing artifact conventions, and do not create
+placeholder files for unrelated artifacts. Bind the artifact to the exact
+source commit and commit only the changed artifact and index in the artifact
+repository, as required by the shared Artifact Store Contract.
 
 If the user has explicitly asked for creation or refresh and no material
 project question blocks the result, you may proceed after showing the preview.

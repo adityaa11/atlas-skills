@@ -1,0 +1,4 @@
+# Local Atlas workflow override. This file is intentionally ignored by Git.
+# Use an absolute path when possible so bootstrap commands remain unambiguous.
+artifact_store:
+  checkout_path: ""

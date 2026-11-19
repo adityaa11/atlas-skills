@@ -70,8 +70,8 @@ STACK CONTEXT PREVIEW
 
 Status: ready
 Will update:
-- .agents/context/stack.md
-- .agents/context/index.md
+- .atlas/contexts/stack.md
+- .atlas/contexts/index.md
 
 Selected: [technology choices]
 Experimental: [bounded candidates]

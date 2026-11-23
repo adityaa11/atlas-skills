@@ -97,6 +97,13 @@ review-contract defect to human/planning authority.
 
 For each finding, identify the ticket requirement it enforces. If no such requirement exists, do not implement it. If it requires changing the ticket, reopening an approved predecessor, adding a provider/runtime/deployment target, making an architecture/product/policy decision, or doing future dependency work, stop and return it to human/planning authority as a scope-change issue.
 
+If planning subsequently changes the effective ticket and authorizes revised
+GO implementation under the shared Review Contract, do not use CFC to repair
+or close a historical clause whose ticket authority was superseded. Preserve
+the CK/CFC history and hand the new contract to GO for a new checkpoint and
+first full CK review. Continue CFC only for still-applicable frozen clauses
+under its own valid authorization.
+
 ## Remediate and hand off
 
 Fix only the accepted in-scope findings from that consolidated review. Do not conduct a new review, create findings, change acceptance criteria, or add unrelated refactoring. Preserve approved predecessor boundaries. Run finding-specific validation and directly affected regressions; record exact results and limitations.
@@ -133,6 +140,35 @@ environment limitation), and whether the applicable frozen oracle passed. For
 replacement work, it must cite the replacement clause ID and replacement
 freeze as well as the HMN authorization. CK must be able to map the evidence
 directly to the applicable frozen clause and authorization without inference.
+
+For evidence unaffected by the authorized remediation, carry forward a valid
+committed artifact reference using the shared Review Contract's locator and
+applicability rules. Collect new proof for the repaired clause and direct
+regressions, including any independent capture or rerun frozen in its oracle.
+Do not re-copy unchanged binaries merely to populate the new checkpoint, and
+do not treat reference reuse as authority to change a closure oracle.
+If the required harness also emits unchanged baselines, use isolated temporary
+output and commit only new required observations, while recording the exact
+run and preserving every frozen recapture obligation.
+
+When remediating an authorized expected-use-path clause, record the actual
+repaired caller, entrypoint, endpoint, consumer/effect, code locations, and
+integration evidence against the existing ticket contract. Do not define a new
+use path or treat a unit-only caller as closure.
+
+For an authorized true-code-path clause, remove or make unreachable only the
+frozen superseded path and record the evidence. Do not add a compatibility
+branch to protect a passed predecessor unless current ticket authority
+explicitly authorizes that legacy path and its retirement terms.
+
+For an authorized migration-hygiene clause, repair only the frozen migration
+inventory/separation mismatch. Keep test data in the specified ephemeral setup
+and do not add a test-only seed migration or durable migration branch merely to
+make validation convenient.
+
+For an authorized empty/initial-state clause, prove the existing frozen clean
+condition and result using ephemeral setup. Do not add a durable seed, hidden
+default, or new first-use behavior unless the ticket already authorizes it.
 
 ## Authority
 

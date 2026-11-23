@@ -106,6 +106,13 @@ artifact-repo/
 
 ## Commands
 
+The exported skills include `modern-web-guidance`. In a target repository, use
+`$modern-web-guidance` for browser API guidance or a requested legacy scan. It
+bundles the `modern-web-guidance@1.0.1` CLI and guides. No npm installation or
+network fetch is needed in the target repository. Running the CLI requires
+Node.js 22 or newer; the guides can also be read directly from the exported
+skill directory.
+
 | Purpose | Windows | macOS / Linux |
 | --- | --- | --- |
 | Show help | `.\atlas-skills.cmd help` | `pwsh ./atlas-skills.ps1 help` |

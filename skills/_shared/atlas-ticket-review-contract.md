@@ -63,6 +63,7 @@ required_observations
 required_validation
 forbidden_substitutes
 dependency_boundary
+expected_use_path, when applicable
 status
 finding_id, when applicable
 ```
@@ -111,6 +112,38 @@ observations include replay, provider-call count, lease generation, redaction,
 or cleanup, evidence MUST show each named item. Reuse a `PROVEN` row unless the
 authorized remediation directly invalidates it or creates a direct regression.
 
+### Prior evidence and current proof
+
+Evidence reuse changes only how a required observation is located; it does not
+change the frozen requirement, row status vocabulary, required harness, or
+review authority. For each proposed reuse, distinguish a stable comparison
+baseline (such as an unchanged reference design) from an observation of the
+implementation under review. A prior baseline may be referenced when its
+source and observation context still match. A prior implementation observation
+may support the current row only when the checkpoint explains why intervening
+code/configuration/data changes cannot affect that observation, required
+current-commit validation and direct regressions have run, and the frozen
+ticket permits that proof. Byte-identical output alone does not establish this.
+
+If the ticket requires an independent capture, a new observation at the current
+revision, or a named rerun, perform it. If behavior, rendering, fixture data,
+relevant observation method, environment, or dependency path changed or cannot
+be shown unchanged, collect new proof. An unrelated harness assertion change
+does not by itself invalidate a baseline capture whose subject and capture
+settings are unchanged. Never use a prior artifact to satisfy a
+current-state obligation by assumption. Changing a frozen capture requirement
+requires the ordinary planning/ticket amendment authority, not a GO, CK, CFC,
+or HMN evidence preference.
+
+When a row uses prior evidence, its existing checkpoint ledger identifies the
+artifact commit, path, blob SHA, original code commit, observation context, and
+the reason it applies to the current code commit. It also identifies any new
+current-revision evidence and the exact validation command/outcome. CK verifies
+those locators and applicability independently. If any required observation
+cannot be verified, the row remains `IMPLEMENTED_UNPROVEN` or `UNRESOLVED` as
+appropriate; a reference is never a new closure status or a substitute for
+`PROVEN`.
+
 ### Acceptance versus evidence collection
 
 Separate ticket pass conditions from the method used to inspect them. Every
@@ -152,6 +185,10 @@ Persist this normalized interpretation in the existing workflow artifacts:
 
 - GO checkpoints include `## Review Contract Closure`: stable row ID, ticket
   authority, required proof, status, and `Internal readiness: READY_FOR_CK`.
+- For every ticket-defined expected use path, GO records its actual committed
+  caller -> entrypoint -> endpoint -> consumer/effect path, code/evidence
+  locations, and any mismatch. A unit-test-only caller does not satisfy a
+  production use path.
 - First CK artifacts include `## Frozen Finding Closure Matrix`. Every finding
   (`CK-001`) and clause (`CK-001.a`) identifies ticket authority, unsatisfied
   evidence, and observable closure condition. Each clause also has a binary
@@ -160,9 +197,14 @@ Persist this normalized interpretation in the existing workflow artifacts:
 - CFC checkpoints map every authorized clause to its status, exact test or
   evidence location, executed command and outcome, and whether the closure
   oracle passed.
+- When an authorized clause concerns use-path reachability, CFC records the
+  actual repaired path against the existing expected path; it does not define a
+  replacement path.
 - HMN artifacts authorize exact unresolved clause IDs and identify resolved
   clauses that MUST NOT be reopened. They reference the CK artifact as the
   source of closure oracles; they do not copy or rewrite CK's criteria.
+- HMN may use actual GO/CFC and CK use-path evidence to diagnose a bounded
+  continuation, but cannot add a caller, consumer, or reachability condition.
 
 These records live in the validated artifact store: ticket/checkpoint records
 under `.atlas/tickets/` and `.atlas/checkpoints/`, and CK/HMN decision records
@@ -173,6 +215,67 @@ Do not renumber established identifiers. New artifacts may normalize legacy
 ones that lack clause IDs from the frozen ticket, existing CK finding, and
 evidence; mark that as legacy normalization and freeze the resulting matrix.
 Do not rewrite historical artifacts.
+
+## Planning amendments after a failed review
+
+An explicit human/planning decision may change an active ticket after CK has
+recorded `CHANGES_REQUIRED`. This is a new effective ticket contract, not CFC
+repair of the old one. The decision MUST identify the exact changed ticket
+rows, exclusions and predecessor/handoff effects; the historical CK clauses it
+supersedes (if any); the obligations that remain; and whether the revised work
+still has one coherent ticket outcome. A materially different outcome or
+independent authority boundary belongs in a new ticket. The user must authorize
+implementation of the revised scope; an amendment alone is not permission for
+GO to begin. One explicit user direction may authorize both the planning
+decision and its implementation; do not demand a second authorization when it
+already does.
+
+GO may use that implementation authorization to submit one new checkpoint
+against the effective ticket. CK then performs a first full review of the effective
+contract at the new code commit. It does not treat the old CK oracle as an
+active gate where the planning decision explicitly superseded its ticket
+authority. It checks all retained obligations and direct regressions. No CK
+replacement freeze, HMN authorization, or CFC cycle is required merely to
+translate the planning amendment into a new review target. The original CK
+result, code binding, and findings remain immutable history. If a CFC
+checkpoint has already been reviewed, do not relabel that past verification as
+a review of the new contract or carry its obsolete clause statuses forward.
+
+A planning decision may cover several affected tickets in one append-only
+record when it maps each ticket's changed rows, retained obligations,
+dependencies, and handoffs separately. Each affected ticket must explicitly
+incorporate that decision by stable ID and revision before implementation or
+review. A consumer ticket may cite an amended producer handoff without copying
+the producer's detailed proof matrix; add only the consumer's own changed
+obligations. No ticket silently inherits new scope from a dependency.
+
+For each newly authorized capability or repair, planning names one ticket as
+the implementation and acceptance owner. First consider amending an active
+ticket that can still deliver one coherent outcome under the same authority;
+a CK failure or conflicting old exclusion alone does not require a new ticket.
+Create a separate ticket only for a distinct outcome or authority boundary, an
+already accepted predecessor that must remain closed, or work that cannot be
+reviewed coherently with the active ticket. State that reason in the planning
+decision. When a new ticket owns the change, the older ticket's amendment
+records only the exact superseded restriction, retained obligations, owner
+ticket and handoff. It does not freeze a second implementation or proof matrix
+for the same capability. A consuming review ticket names only its own handoff
+checks and does not re-approve the owner's implementation. Owner CK `PASS`
+never implies CK `PASS` for the older or consuming ticket.
+
+An audit finding is a planning input, not an automatic ticket request. Record
+whether it requires a current repair, has an explicitly accepted successor
+deferral, or still needs a decision. Related current repairs may share one
+bounded owner ticket when authority, outcome, and regression proof fit; an
+accepted deferral does not create a current implementation ticket. No audit
+`PASS` closes its findings by itself.
+
+Before freezing a ticket set or amendment, check the dependency graph for a
+cycle: a repair ticket cannot require `PASS` from the failed ticket whose gap
+it exists to resolve. It may consume that ticket's committed code/evidence as
+an inspection baseline and require direct regressions, while approval of the
+failed ticket remains separate. Report an unresolved cycle to planning before
+GO begins.
 
 ## 5. First review, later verification, and contract gaps
 
@@ -264,6 +367,12 @@ This is a separate path from `REVIEW_CONTRACT_GAP`. It exists only when a
 frozen CK oracle conflicts with approved implementation or environment
 authority and cannot be satisfied without unapproved functionality or evidence.
 It is not a general way to replace a failed, difficult, or unproven test.
+When planning has authorized materially changed ticket behavior and a new GO
+checkpoint, use the planning-amendment path above. Do not add this replacement
+freeze and HMN cycle merely because the old CK oracle describes the superseded
+behavior. This replacement path remains available for a demonstrated oracle
+authority conflict within a continuing bounded CFC recovery, with all of its
+independent prerequisites below.
 
 A replacement freeze is eligible through exactly one of these routes:
 
@@ -418,3 +527,51 @@ convenient smaller test. Approved predecessor work stays closed unless the
 current frozen ticket requires otherwise. Direct regressions in the authorized
 scope remain blockable. Future-ticket work stays future-ticket work. CK alone
 issues ordinary `PASS`; this protocol does not change that authority.
+
+## True code path
+
+An approved predecessor preserves its accepted interface, invariants, and
+evidence boundary. It does not require later ticket work to retain a superseded
+implementation, fallback, compatibility wrapper, duplicate dispatcher, feature
+branch, or dormant path merely because the predecessor passed. When the current
+ticket replaces an in-scope behavior, its expected use path is the one true
+operational path after the change; remove or make unreachable the superseded
+path and prove that result.
+
+A legacy/backward-compatibility path is permitted only when the accepted
+Implementation Context or ticket explicitly names its consumer, duration or
+retirement trigger, preserved contract, and verification. Do not infer legacy
+support from a prior `PASS`, general caution, or test convenience. GO records
+the actual path and retirement evidence, CK verifies it, CFC repairs only the
+frozen mismatch, and HMN cannot add preservation requirements without ticket
+authority.
+
+## Migration hygiene
+
+Intended SQL migrations are durable schema or production-data evolution
+authorized by the frozen ticket. Do not add a migration, seed SQL, or migration
+runner branch whose only purpose is creating test data or test state. Test-only
+setup belongs in an ephemeral test mechanism: a disposable database/container,
+transaction rollback, isolated schema, fixture factory, or equivalent teardown
+path that cannot contaminate the intended migration graph.
+
+A ticket may add production seed/reference data only when current authority
+requires that data in a real operational path and names its ownership and
+verification. GO records the actual migration inventory and ephemeral test
+mechanism, CK independently verifies that no test-only SQL entered intended
+migrations, CFC preserves this separation, and HMN cannot authorize pollution
+without a current ticket/planning amendment.
+
+## Empty and initial state
+
+For every data-dependent ticket, derive the behavior when its relevant database
+or tenant scope has no records yet. The frozen ticket must state the expected
+endpoint/UI/system result, permitted initialization or absence of mutation,
+error/empty representation, and evidence. Do not hide an unchosen product
+behavior behind a seed migration or test fixture. If accepted authority cannot
+choose the empty-state behavior, return it to planning rather than inventing a
+default.
+
+GO records actual first-use/empty-database evidence, CK verifies it against the
+frozen condition, CFC repairs only the frozen gap, and HMN cannot add a new
+empty-state product behavior without ticket authority.

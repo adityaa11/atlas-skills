@@ -46,6 +46,13 @@ HMN may interpret an existing ticket requirement, determine whether a finding re
 
 HMN must stop with `HUMAN_DECISION_REQUIRED` when the next step needs a ticket-scope change, new product requirement, provider/runtime/deployment choice, architecture or policy decision, reopening an approved predecessor, contradictory frozen authority, or competing interpretations that the recorded authority cannot resolve. Do not choose that decision merely because implementation is inconvenient. A reviewer suggestion without frozen-ticket authority is not mandatory work.
 
+When such a planning change is needed, identify the minimum changed ticket
+rows, historical CK clauses affected, retained boundaries, and dependent
+handoffs. Return that map to human/planning authority without inventing the
+new contract or issuing CFC authorization. After an explicit revised-ticket
+decision and user GO authorization, the shared planning-amendment path needs
+no HMN replacement authorization solely to carry the new scope into CK.
+
 ## Reconstruct the bounded state
 
 Do not ask the user to restate workflow history when it is available in the repository. Inspect only enough evidence to understand the current blocked ticket; this is not a new broad code review. Read, as applicable:
@@ -55,6 +62,27 @@ Do not ask the user to restate workflow history when it is available in the repo
 3. the latest consolidated CK artifact, any post-CFC CK verification, and its open findings;
 4. the latest CFC checkpoint/remediation commit and any newer HMN artifact;
 5. `HEAD`, worktree status, and the directly relevant implementation, tests, migrations, or validation evidence.
+
+For a ticket-defined expected use path, read the actual GO/CFC path report and
+CK's independent verification. HMN may determine whether the recorded mismatch
+is ticket-bound and repairable, but it must not add or redefine a caller,
+consumer, endpoint, or activation condition.
+
+An earlier ticket `PASS` does not authorize a legacy path. When a current
+ticket defines a true code path, HMN may authorize repair of its frozen
+retirement/reachability mismatch but must not preserve or restore a fallback,
+compatibility branch, or old caller unless the current frozen authority names
+its consumer and retirement terms.
+
+For migration hygiene, HMN may authorize repair of a ticket-bound separation
+failure but cannot turn test-only seed SQL into a durable migration. If a real
+production-data seed, migration policy, or retention decision is required but
+not accepted, return `HUMAN_DECISION_REQUIRED` for planning authority.
+
+For an empty/initial-state mismatch, HMN may authorize repair only of the
+frozen behavior and evidence. If the ticket/context does not decide the
+material first-use or empty result, return `HUMAN_DECISION_REQUIRED`; do not
+choose a product default or durable seed.
 
 When a CK finding has survived multiple CFC cycles, explicitly audit the loop
 before authorizing more work: compare the original frozen clause, every HMN
@@ -117,10 +145,12 @@ approved authority, and the unapproved functionality or evidence that would be
 required to satisfy it. The correct decision before planning correction is
 `HUMAN_DECISION_REQUIRED`; HMN must not authorize CFC for that original clause.
 
-After a subsequent explicit planning amendment corrects the underlying ticket
-Review Contract, CK may validate and freeze the replacement contract through
-the shared-contract Route A or Route B. Route B additionally requires that an
-original CK artifact froze the clause unresolved and CFC durably recorded
+When planning retains the bounded CFC recovery path and corrects an impossible
+CK oracle without authorizing materially changed GO work, CK may validate and
+freeze a replacement contract through shared-contract Route A or Route B.
+Materially changed ticket behavior with authorized GO work follows the shared
+planning-amendment path and a new full CK review instead. Route B additionally
+requires that an original CK artifact froze the clause unresolved and CFC durably recorded
 `CFC_NOT_READY_FOR_CK` without a remediation commit or CK handoff because the
 oracle conflicts with approved authority. HMN must reject replacement
 eligibility when the amendment is absent, the required Route A or Route B facts

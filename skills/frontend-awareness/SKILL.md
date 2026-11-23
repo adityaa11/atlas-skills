@@ -1,12 +1,12 @@
 ---
 name: frontend-awareness
 description: >
-  Apply a project-agnostic frontend design intelligence baseline for refactoring
-  existing UI and creating new UI. Use for tasks involving layout, information
-  hierarchy, visual language, components, responsive behavior, interaction,
-  accessibility, or frontend consistency. For new projects or projects without
-  a stable design system, first derive a project-specific visual contract before
-  implementation. Do not invoke for backend-only changes.
+  Define or preserve a project's UI design when creating or refactoring screens:
+  information hierarchy, visual language, component composition, responsive
+  transformation, interaction states, accessibility outcomes, and rendered
+  review. Derive a visual contract when none exists. Do not use for isolated
+  browser API, client-side performance, or security changes that need no UI
+  design decision.
 ---
 
 # Frontend Awareness
@@ -25,6 +25,15 @@ Global frontend design awareness is reusable.
 Project-specific visual language is derived from the product context.
 
 Screen-specific implementation loads only the relevant context.
+
+## Boundary with Modern Web Guidance
+
+This skill owns project-specific UI decisions and visual review. Use
+`modern-web-guidance` for HTML, CSS, DOM, accessibility mechanics, browser
+support, and technical fallbacks when those details matter. Use both only when
+the task needs UI design decisions and browser implementation guidance. A
+narrow browser behavior fix can use `modern-web-guidance` alone. Preserve the
+project's CSP and accepted ticket scope in either case.
 
 ---
 

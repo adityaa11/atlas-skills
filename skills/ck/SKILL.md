@@ -7,6 +7,15 @@ description: Atlas committed-checkpoint review workflow. Use only when the user 
 
 CK reviews one committed checkpoint against the frozen current ticket and produces one consolidated review. The ticket is the review contract. A CK artifact records whether existing ticket authority was met; it cannot create requirements.
 
+When a planning amendment explicitly changes a ticket after a failed CK and
+GO submits a newly authorized checkpoint, review the effective ticket in full
+as a new first review. Verify the amendment's exact row/supersession map and
+current source binding; retain the historical CK result without enforcing an
+oracle whose ticket authority was explicitly superseded. Do not require a
+replacement freeze or HMN merely because the earlier CK recorded the old
+contract. If the amendment or implementation authorization is missing or the
+changed obligation is ambiguous, return the authority issue to planning.
+
 ## Shared interpretation rule
 
 GO, CK, CFC, and HMN MUST derive active-ticket scope, acceptance obligations,
@@ -29,6 +38,15 @@ Confirm the ticket is `awaiting_review`, the recorded commit matches the committ
 
 Review the current ticket's scope, acceptance criteria, explicit review requirements, explicit source references, and the approved dependency interfaces/boundaries it actually consumes. Check only regressions the ticket requires to remain green. Inspect enough implementation evidence to make a reasonable consolidated review; broad inspection does not broaden review authority.
 
+When a checkpoint references prior evidence, independently resolve its artifact
+commit/path/blob, original code binding, observation context, and stated reason
+for applicability to the reviewed commit. Check required current validation and
+direct regressions against the frozen row. An unchanged baseline can remain a
+valid comparison source; an old implementation capture alone cannot prove a
+changed current surface. Reject an unverifiable or stale reference as missing
+proof under the existing row status and result rules, without demanding a new
+capture solely because the evidence lives at an older artifact path.
+
 Resolve the active-ticket tuple and derive the complete Review Contract before
 reviewing. The first review MUST traverse every applicable row and consolidate
 all currently identifiable ticket-bound deficiencies that a competent review of
@@ -44,6 +62,31 @@ add a uniform per-scenario checklist by reviewer preference. If ticket wording
 cannot resolve a proposed condition, do not convert it into `CHANGES_REQUIRED`;
 record a scope/authority observation and follow the existing human/planning
 handoff if that ambiguity prevents a ticket-based decision.
+
+For every ticket-defined expected use path, independently trace the committed
+actual caller -> entrypoint -> endpoint -> consumer/effect path and evaluate
+the GO/CFC evidence. A helper, export, route, worker, or component reachable
+only from a unit test does not satisfy a ticket-required production path. This
+is a QC/QA check against the frozen ticket contract, not authority to invent a
+new caller or activation requirement.
+
+When the ticket defines a true code path, verify that each named superseded
+path is removed or unreachable and that no unapproved fallback, compatibility
+wrapper, duplicate branch, or legacy caller remains. A prior ticket `PASS`
+does not justify retaining such a path; enforce a legacy path only when its
+consumer and retirement terms are explicitly frozen in current authority.
+
+For persistence work, independently inspect the committed migration graph and
+test setup. Verify each migration or durable seed has current-ticket authority
+and a real operational consumer, and that test data/setup is ephemeral and
+cannot run as an intended migration. A test-only seed SQL or migration branch
+is a ticket-bound failure when the frozen migration-hygiene contract forbids it.
+
+For every ticket-defined empty/initial-state contract, independently verify the
+committed behavior from the stated clean condition through its entrypoint and
+endpoint/UI/system result. A populated fixture alone is insufficient evidence;
+do not demand a new empty-state UX or default that is not frozen in ticket
+authority.
 
 A blocking finding must name the current-ticket requirement it violates and include the evidence, affected location, and observable correction needed. Use only these ordinary results:
 
@@ -108,6 +151,8 @@ CFC cycle.
 The shared Review Contract's replacement path is distinct from
 `REVIEW_CONTRACT_GAP`. CK may write an append-only replacement-contract freeze
 only after it independently validates one shared-contract eligibility route:
+it is for a continuing bounded CFC recovery, not an extra prerequisite for a
+planning-authorized new GO checkpoint against materially changed ticket scope.
 Route A retains the existing post-CFC verification prerequisite; Route B is the
 bounded pre-CFC non-remediable authority-conflict route. Route B requires an
 original frozen unresolved clause, an attempted `CFC_NOT_READY_FOR_CK` record
